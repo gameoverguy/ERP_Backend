@@ -27,22 +27,29 @@ async function index(req, res) {
   }
 }
 
-// Edit Raw Material by materialId
+// Edit Raw Material (Flexible API)
 async function editRawMaterial(req, res) {
   try {
     const { materialId } = req.params;
-    const { materialName, minStock } = req.body;
+    const updateData = req.body;
 
-    // Ensure materialId exists and find by materialId
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "No data provided to update" });
+    }
+
+    // Find the material by materialId
     const material = await RawMaterial.findOne({ where: { materialId } });
 
     if (!material) {
       return res.status(404).json({ message: "Raw material not found" });
     }
 
-    // Update fields if provided
-    if (materialName !== undefined) material.materialName = materialName;
-    if (minStock !== undefined) material.minStock = minStock;
+    // Update only the provided fields
+    Object.keys(updateData).forEach((key) => {
+      if (material[key] !== undefined) {
+        material[key] = updateData[key];
+      }
+    });
 
     await material.save();
 
