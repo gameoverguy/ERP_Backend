@@ -42,7 +42,6 @@ async function index(req, res) {
     const batches = await Batch.findAll({
       include: {
         model: BatchHistory,
-        attributes: ["status", "startedAt", "completedAt", "processDuration"],
       },
     });
 
