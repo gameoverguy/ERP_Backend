@@ -12,7 +12,9 @@ async function addPurchase(req, res) {
     } = req.body;
 
     let materialId = rawMaterial.materialId;
+    let materialName = rawMaterial.materialName;
     let vendorId = vendor.vendorId;
+    let vendorName = vendor.vendorName;
 
     // Step 1: Create BOM Entry Without bomId
     const newPurchase = await Purchase.create({
