@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -11,6 +12,7 @@ const rawMaterialStockRoute = require("./routes/rawMaterialStock");
 const batchRoute = require("./routes/batch");
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/rawMaterials", rawMaterialRoute);
 app.use("/boms", bomRoute);
