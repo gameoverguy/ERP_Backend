@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get("/", bomController.index);
 router.post("/addBOM", bomController.addBOM);
-router.put("/:bomId", bomController.editBOM);
+router.patch("/:bomId", bomController.editBOM);
 router.delete("/:bomId", bomController.deleteBOM);
 
 module.exports = router;

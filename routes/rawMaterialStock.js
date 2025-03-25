@@ -7,5 +7,9 @@ router.post(
   "/upsert_RawMaterialStock",
   rawMaterialStockController.upsert_RawMaterialStock
 );
+router.patch(
+  "/deduct_RawMaterialStock",
+  rawMaterialStockController.deductRawMaterialStock
+);
 
 module.exports = router;

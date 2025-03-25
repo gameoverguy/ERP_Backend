@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+//const { where } = require("sequelize");
 const { RawMaterialStock, RawMaterial } = require("../models");
 
 async function upsert_RawMaterialStock(req, res) {
@@ -41,6 +41,36 @@ async function upsert_RawMaterialStock(req, res) {
   }
 }
 
+async function deductRawMaterialStock(req, res) {
+  try {
+    const { materialName, quantityToDeduct } = req.body;
+
+    // Check if material exists
+    let material = await RawMaterialStock.findOne({ where: { materialName } });
+
+    if (!material) {
+      return res.status(404).json({ message: "Material not found" });
+    }
+
+    const remainingStock = material.currentStock - parseFloat(quantityToDeduct);
+
+    if (remainingStock < 0) {
+      return res.status(400).json({ message: "Insufficient stock" });
+    }
+
+    // Update stock
+    material.currentStock = remainingStock;
+    await material.save();
+
+    return res
+      .status(200)
+      .json({ message: "Stock deducted successfully", data: material });
+  } catch (error) {
+    console.error("Error in deductRawMaterialStock:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
 async function index(req, res) {
   try {
     const materials = await RawMaterialStock.findAll();
@@ -51,4 +81,4 @@ async function index(req, res) {
   }
 }
 
-module.exports = { index, upsert_RawMaterialStock };
+module.exports = { index, upsert_RawMaterialStock, deductRawMaterialStock };
