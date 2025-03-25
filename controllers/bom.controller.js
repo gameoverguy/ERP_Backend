@@ -13,10 +13,7 @@ async function addBOM(req, res) {
     newBOM.bomId = `BM${newBOM.id.toString()}`;
 
     // Calculate Total Weight
-    const totalQuantity = rawMaterials.reduce(
-      (acc, rm) => acc + rm.quantity,
-      0
-    );
+    const totalQuantity = rawMaterials.reduce((acc, rm) => acc + rm.quantity);
     newBOM.totalWeight = totalQuantity;
 
     await newBOM.save();
@@ -24,7 +21,7 @@ async function addBOM(req, res) {
     // Link BOM with Raw Materials
     const bomMaterials = rawMaterials.map((rm) => ({
       bomId: newBOM.bomId,
-      materialId: rm.materialId,
+      materialId: rm.rawMaterials.materialId,
       quantity: rm.quantity,
     }));
 
