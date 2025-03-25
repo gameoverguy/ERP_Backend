@@ -3,7 +3,10 @@ const { BOM, RawMaterial, BOMRawMaterials } = require("../models");
 // Add BOM
 async function addBOM(req, res) {
   try {
-    const { bomName, rawMaterials } = req.body;
+    const {
+      bomName,
+      rawMaterials, // an object containing 0 - many rawmaterials
+    } = req.body;
 
     // Create BOM Entry Without bomId
     const newBOM = await BOM.create({ bomName });
@@ -69,7 +72,11 @@ async function index(req, res) {
 async function editBOM(req, res) {
   try {
     const { bomId } = req.params;
-    const { bomName, rawMaterials } = req.body;
+
+    const {
+      bomName,
+      rawMaterials, // an object containing 0 - many rawmaterials
+    } = req.body;
 
     const bom = await BOM.findOne({ where: { bomId } });
 
@@ -77,27 +84,32 @@ async function editBOM(req, res) {
       return res.status(404).json({ message: "BOM not found" });
     }
 
-    if (bomName) bom.bomName = bomName;
+    // Update BOM Name if provided
+    if (bomName) {
+      bom.bomName = bomName;
+      await bom.save();
+    }
 
-    const totalQuantity = rawMaterials.reduce(
-      (acc, rm) => acc + rm.quantity,
-      0
-    );
-    bom.totalWeight = totalQuantity;
+    // Update Raw Materials if provided
+    if (rawMaterials && rawMaterials.length > 0) {
+      const totalQuantity = rawMaterials.reduce(
+        (acc, rm) => acc + rm.quantity,
+        0
+      );
+      bom.totalWeight = totalQuantity;
+      await bom.save();
 
-    await bom.save();
+      // Delete old associations
+      await BOMRawMaterials.destroy({ where: { bomId } });
 
-    // Delete old associations
-    await BOMRawMaterials.destroy({ where: { bomId } });
-
-    // Create new associations
-    const bomMaterials = rawMaterials.map((rm) => ({
-      bomId: bom.bomId,
-      materialId: rm.materialId,
-      quantity: rm.quantity,
-    }));
-
-    await BOMRawMaterials.bulkCreate(bomMaterials);
+      // Create new associations
+      const bomMaterials = rawMaterials.map((rm) => ({
+        bomId: bom.bomId,
+        materialId: rm.materialId,
+        quantity: rm.quantity,
+      }));
+      await BOMRawMaterials.bulkCreate(bomMaterials);
+    }
 
     return res
       .status(200)
@@ -122,11 +134,9 @@ async function deleteBOM(req, res) {
     await BOMRawMaterials.destroy({ where: { bomId } });
     await bom.destroy();
 
-    return res
-      .status(200)
-      .json({
-        message: "BOM and associated raw materials deleted successfully",
-      });
+    return res.status(200).json({
+      message: "BOM and associated raw materials deleted successfully",
+    });
   } catch (error) {
     console.error("Error deleting BOM:", error);
     return res.status(500).json({ error: "Internal server error" });

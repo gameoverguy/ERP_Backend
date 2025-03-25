@@ -3,7 +3,13 @@ const { Batch, BatchHistory } = require("../models");
 // Add Batch
 async function addBatch(req, res) {
   try {
-    const { bomName, initialWeight, employeeCount, startDate } = req.body;
+    const {
+      bomName, //selected bom name
+      initialWeight, // Intial weight from the BOM
+      employeeCount, // number of employees working in the batch
+      startDate, //batch startdata
+      currentStatus, //selected status
+    } = req.body;
 
     // Create a new batch
     const newBatch = await Batch.create({
@@ -11,7 +17,7 @@ async function addBatch(req, res) {
       initialWeight,
       currentWeight: initialWeight,
       employeeCount,
-      currentStatus: "default",
+      currentStatus,
       startDate,
     });
 
