@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "root",
-    "password": "mysql",
+    "password": "admin",
     "database": "ERP_DB",
     "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": null,
+    "password": "Bala@101311",
     "database": "database_test",
     "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": null,
+    "password": "Bala@101311",
     "database": "database_production",
     "host": "localhost",
     "dialect": "mysql"
