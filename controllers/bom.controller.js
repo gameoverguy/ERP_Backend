@@ -74,7 +74,7 @@ async function editBOM(req, res) {
   try {
     const { bomId } = req.params;
 
-    const { bomName, rawMaterialData } = req.body;
+    const { bomName, rawMaterials } = req.body;
 
     const bom = await BOM.findOne({ where: { bomId } });
 
@@ -89,8 +89,8 @@ async function editBOM(req, res) {
     }
 
     // Update Raw Materials if provided
-    if (rawMaterialData && rawMaterialData.length > 0) {
-      const totalQuantity = rawMaterialData.reduce(
+    if (rawMaterials && rawMaterials.length > 0) {
+      const totalQuantity = rawMaterials.reduce(
         (acc, rm) => acc + rm.quantity,
         0
       );
@@ -101,7 +101,7 @@ async function editBOM(req, res) {
       await BOMRawMaterials.destroy({ where: { bomId } });
 
       // Create new associations
-      const bomMaterials = rawMaterialData.map((rm) => ({
+      const bomMaterials = rawMaterials.map((rm) => ({
         bomId: bom.bomId,
         materialId: rm.materialId,
         quantity: rm.quantity,
