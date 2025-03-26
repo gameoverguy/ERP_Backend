@@ -3,26 +3,27 @@ const { BOM, RawMaterial, BOMRawMaterials } = require("../models");
 // Add BOM
 async function addBOM(req, res) {
   try {
-    const {
-      bomName,
-      rawMaterials, // an object containing 0 - many rawmaterials
-    } = req.body;
+    const { bomName, rawMaterialData } = req.body;
+
+    console.log(bomName);
+    console.log(rawMaterialData);
 
     // Create BOM Entry Without bomId
     const newBOM = await BOM.create({ bomName });
     newBOM.bomId = `BM${newBOM.id.toString()}`;
 
     // Calculate Total Weight
-    const totalQuantity = rawMaterials.reduce(
-      (acc, rm) => acc + rm.quantity,
+    const totalQuantity = rawMaterialData.reduce(
+      (acc, rm) => acc + parseFloat(rm.quantity || 0),
       0
     );
-    newBOM.totalWeight = totalQuantity;
+
+    newBOM.totalWeight = parseFloat(totalQuantity);
 
     await newBOM.save();
 
     // Link BOM with Raw Materials
-    const bomMaterials = rawMaterials.map((rm) => ({
+    const bomMaterials = rawMaterialData.map((rm) => ({
       bomId: newBOM.bomId,
       materialId: rm.materialId,
       quantity: rm.quantity,
@@ -73,10 +74,7 @@ async function editBOM(req, res) {
   try {
     const { bomId } = req.params;
 
-    const {
-      bomName,
-      rawMaterials, // an object containing 0 - many rawmaterials
-    } = req.body;
+    const { bomName, rawMaterialData } = req.body;
 
     const bom = await BOM.findOne({ where: { bomId } });
 
@@ -91,8 +89,8 @@ async function editBOM(req, res) {
     }
 
     // Update Raw Materials if provided
-    if (rawMaterials && rawMaterials.length > 0) {
-      const totalQuantity = rawMaterials.reduce(
+    if (rawMaterialData && rawMaterialData.length > 0) {
+      const totalQuantity = rawMaterialData.reduce(
         (acc, rm) => acc + rm.quantity,
         0
       );
@@ -103,7 +101,7 @@ async function editBOM(req, res) {
       await BOMRawMaterials.destroy({ where: { bomId } });
 
       // Create new associations
-      const bomMaterials = rawMaterials.map((rm) => ({
+      const bomMaterials = rawMaterialData.map((rm) => ({
         bomId: bom.bomId,
         materialId: rm.materialId,
         quantity: rm.quantity,
