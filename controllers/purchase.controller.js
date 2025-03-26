@@ -2,6 +2,7 @@ const { Purchase } = require("../models");
 
 async function addPurchase(req, res) {
   try {
+    console.log("Received data:", req.body);
     const {
       invoiceNumber,
       PO_Number,
