@@ -36,6 +36,28 @@ module.exports = {
         startDate: new Date("2025-03-08"),
         endDate: null,
       },
+      {
+        batchId: "BATCH004",
+        bomName: "Mustard_Powder_500g",
+        initialWeight: 350,
+        currentWeight: 330,
+        totalWaste: 20,
+        employeeCount: 9,
+        currentStatus: "Complete",
+        startDate: new Date("2025-03-10"),
+        endDate: new Date("2025-03-15"),
+      },
+      {
+        batchId: "BATCH005",
+        bomName: "Cumin_Powder_1kg",
+        initialWeight: 450,
+        currentWeight: 440,
+        totalWaste: 10,
+        employeeCount: 11,
+        currentStatus: "Complete",
+        startDate: new Date("2025-03-12"),
+        endDate: new Date("2025-03-18"),
+      },
     ]);
   },
 

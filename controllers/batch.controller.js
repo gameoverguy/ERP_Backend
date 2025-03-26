@@ -62,8 +62,6 @@ async function index(req, res) {
 async function editBatch(req, res) {
   try {
     const { batchId } = req.params;
-    const { bomName, initialWeight, employeeCount, currentStatus, endDate } =
-      req.body;
 
     const batch = await Batch.findOne({ where: { batchId } });
 
@@ -71,12 +69,8 @@ async function editBatch(req, res) {
       return res.status(404).json({ message: "Batch not found" });
     }
 
-    // Update Batch
-    if (bomName) batch.bomName = bomName;
-    if (initialWeight) batch.initialWeight = initialWeight;
-    if (employeeCount) batch.employeeCount = employeeCount;
-    if (currentStatus) batch.currentStatus = currentStatus;
-    if (endDate) batch.endDate = endDate;
+    // Update only the provided fields
+    Object.assign(batch, req.body);
 
     await batch.save();
 
