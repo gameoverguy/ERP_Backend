@@ -11,6 +11,7 @@ const purchaseRoute = require("./routes/purchase");
 const rawMaterialStockRoute = require("./routes/rawMaterialStock");
 const batchRoute = require("./routes/batch");
 const finishedProductRoute = require("./routes/finishedProduct");
+const users = require("./routes/user");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -22,5 +23,6 @@ app.use("/purchases", purchaseRoute);
 app.use("/rawMaterialStock", rawMaterialStockRoute);
 app.use("/batches", batchRoute);
 app.use("/finishedProducts", finishedProductRoute);
+app.use('/users', users);
 
 module.exports = app;
