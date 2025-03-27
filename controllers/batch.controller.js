@@ -29,7 +29,7 @@ async function addBatch(req, res) {
     await BatchHistory.create({
       batchId: newBatch.batchId,
       initialWeight: newBatch.initialWeight,
-      status: "Started",
+      status: newBatch.currentStatus,
       startedAt: startDate,
     });
 
@@ -59,7 +59,12 @@ async function index(req, res) {
 }
 
 // Edit Batch
+// Edit Batch and Update Batch History
 async function editBatch(req, res) {
+
+  console.log(req.body);
+
+
   try {
     const { batchId } = req.params;
 
@@ -69,8 +74,24 @@ async function editBatch(req, res) {
       return res.status(404).json({ message: "Batch not found" });
     }
 
+    // Store previous status and weight before updating
+    const previousStatus = batch.currentStatus;
+
     // Update only the provided fields
     await batch.update(req.body);
+
+    // If status or weight changed, add a new entry in BatchHistory
+    if (
+      (req.body.currentStatus && req.body.currentStatus !== previousStatus)
+    ) {
+      await BatchHistory.create({
+        batchId: batch.batchId,
+        initialWeight: batch.initialWeight,
+        currentWeight: batch.currentWeight,
+        status: batch.currentStatus,
+        updatedAt: new Date(),
+      });
+    }
 
     return res
       .status(200)
@@ -80,6 +101,7 @@ async function editBatch(req, res) {
     return res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 // Delete Batch
 async function deleteBatch(req, res) {
