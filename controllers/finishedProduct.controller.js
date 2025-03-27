@@ -4,6 +4,8 @@ const { FinishedProduct } = require("../models");
 // Add or Update Finished Product Stock
 async function upsert_FinishedProduct(req, res) {
   try {
+    console.log(req.body);
+
     const { batchId, productName, sizes, mfdDate, expDate } = req.body;
 
     // Check if product with the given batchId exists
@@ -48,7 +50,7 @@ async function upsert_FinishedProduct(req, res) {
 }
 
 // Deduct Stock from Finished Product
-async function deductFinishedProduct(req, res) {
+async function deduct_FinishedProduct(req, res) {
   try {
     const { batchId, sizes } = req.body;
 
@@ -94,4 +96,4 @@ async function index(req, res) {
   }
 }
 
-module.exports = { index, upsert_FinishedProduct, deductFinishedProduct };
+module.exports = { index, upsert_FinishedProduct, deduct_FinishedProduct };

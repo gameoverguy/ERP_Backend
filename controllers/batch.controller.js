@@ -70,9 +70,7 @@ async function editBatch(req, res) {
     }
 
     // Update only the provided fields
-    Object.assign(batch, req.body);
-
-    await batch.save();
+    await batch.update(req.body);
 
     return res
       .status(200)
