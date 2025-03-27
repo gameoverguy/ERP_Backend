@@ -48,7 +48,7 @@ module.exports = {
 
     // Set AUTO_INCREMENT starting point to 10001 for 'id' column
     await queryInterface.sequelize.query(
-      "ALTER TABLE `bom` AUTO_INCREMENT = 10001;"
+      "ALTER TABLE `users` AUTO_INCREMENT = 10001;"
     );
   },
 

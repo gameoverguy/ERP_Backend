@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   Vendor.init(
     {
       vendorId: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING, 
         allowNull: true,
         unique: true,
       },

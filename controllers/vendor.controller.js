@@ -84,7 +84,7 @@ async function deleteVendor(req, res) {
   try {
     const { vendorId } = req.params;
 
-    const vendor = await Vendor.findOne({ where: { vendorId } });
+    const vendor = await Vendor.findOne({ where: { id: vendorId } });
 
     if (!vendor) {
       return res.status(404).json({ message: "Vendor not found" });
