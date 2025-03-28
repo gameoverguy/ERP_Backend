@@ -44,6 +44,8 @@ async function addBatch(req, res) {
       status: newBatch.currentStatus,
       startedAt: startDate,
       completedAt: null,
+      initialProcessWeight: newBatch.currentWeight,
+      processWaste: totalWaste,
     });
 
     return res
@@ -75,22 +77,26 @@ async function index(req, res) {
 // Edit Batch and Update Batch History
 async function editBatch(req, res) {
   function processDuration(startedAt, completedAt) {
-    const date1 = new Date("2025-03-11T05:30:00");
-    const date2 = new Date("2025-03-13T08:29:00"); // Adjusted to match 2d, 23h, 59m
+    if (!startedAt || !completedAt) return null; // Prevents invalid calculations
 
-    const diffMs = date2 - date1; // Difference in milliseconds
-    const diffMinutes = Math.floor(diffMs / (1000 * 60)); // Convert to minutes
+    const diffMs = new Date(completedAt) - new Date(startedAt); // Difference in milliseconds
+    const totalSeconds = Math.floor(diffMs / 1000); // Convert to seconds
 
-    const days = Math.floor(diffMinutes / (60 * 24)); // Extract days
-    const hours = Math.floor((diffMinutes % (60 * 24)) / 60); // Extract hours
-    const minutes = diffMinutes % 60; // Extract minutes
+    const hours = Math.floor(totalSeconds / 3600); // Get hours
+    const minutes = Math.floor((totalSeconds % 3600) / 60); // Get minutes
+    const seconds = totalSeconds % 60; // Get seconds
 
-    console.log(`${days} days, ${hours} hours, ${minutes} minutes`);
-    return `${days} days, ${hours} hours, ${minutes} minutes`;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
+
+
+
+
+
+
   try {
     const { batchId } = req.params;
-    const { currentStatus, startedAt } = req.body;
+    const { currentStatus, initialWeight, waste, totalWaste, currentWeight, endDate } = req.body;
 
     const batch = await Batch.findOne({ where: { batchId } });
 
@@ -100,26 +106,54 @@ async function editBatch(req, res) {
 
     const previousStatus = batch.currentStatus;
     const completedAt = new Date();
-    const processDuration = processDuration(startedAt, completedAt);
+    //const processDuration = processDuration(startedAt, completedAt);
 
-    // Update batch with the new status
-    await batch.update({ currentStatus });
+
+    const updateData = { currentStatus, totalWaste, currentWeight };
+
+    if (endDate != null) {
+      updateData.endDate = endDate; // Only add endDate if it's provided
+    }
+
+    await batch.update(updateData);
+
+
 
     // If status is changing, update BatchHistory
     if (currentStatus && currentStatus !== previousStatus) {
       // Mark `completedAt` for the previous status
-      await BatchHistory.update(
-        { completedAt: completedAt },
-        { processDuration: processDuration },
-        { where: { batchId, status: previousStatus, completedAt: null } }
-      );
+
+      const previousHistory = await BatchHistory.findOne({
+        where: { batchId, status: previousStatus, completedAt: null }
+      });
+
+      if (previousHistory) {
+        const startedAt = previousHistory.startedAt;
+        const completedAt = new Date();
+        const duration = processDuration(startedAt, completedAt);
+
+        await BatchHistory.update(
+          {
+            completedAt,
+            processDuration: duration,
+            currentWeight: initialWeight,
+            processWaste: waste,
+          },
+          { where: { batchId, status: previousStatus, completedAt: null } }
+        );
+      }
+
+
 
       // Insert new status entry with `startedAt`
       await BatchHistory.create({
+        initialWeight: batch.initialWeight,
+        initialProcessWeight: currentWeight,
         batchId: batch.batchId,
         status: currentStatus,
         startedAt: completedAt, // This marks when the new status begins
       });
+
     }
 
     return res
