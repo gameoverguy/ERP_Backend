@@ -166,6 +166,7 @@ async function editBatch(req, res) {
 }
 
 // Delete Batch
+//Hello
 async function deleteBatch(req, res) {
   try {
     const { batchId } = req.params;
