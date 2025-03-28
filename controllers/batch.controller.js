@@ -4,33 +4,46 @@ const { Batch, BatchHistory } = require("../models");
 async function addBatch(req, res) {
   try {
     const {
-      bomName, //selected bom name
-      initialWeight, // Intial weight from the BOM
-      employeeCount, // number of employees working in the batch
-      startDate, //batch startdata
-      currentStatus, //selected status
+      bomName,
+      initialWeight,
+      currentWeight,
+      employeeCount,
+      currentStatus,
+      startDate,
+      totalWaste,
     } = req.body;
+
+    console.log(req.body);
 
     // Create a new batch
     const newBatch = await Batch.create({
       bomName,
       initialWeight,
-      currentWeight: initialWeight,
+      currentWeight,
       employeeCount,
       currentStatus,
       startDate,
+      totalWaste,
     });
 
     newBatch.batchId = `BAT${newBatch.id.toString()}`;
+    newBatch.bomName = bomName;
+    newBatch.initialWeight = initialWeight;
+    newBatch.currentWeight = currentWeight;
+    newBatch.employeeCount = employeeCount;
+    newBatch.currentStatus = currentStatus;
+    newBatch.startDate = startDate;
+    newBatch.totalWaste = totalWaste;
 
     await newBatch.save();
 
     // Create a corresponding batch history
     await BatchHistory.create({
       batchId: newBatch.batchId,
-      initialWeight: newBatch.initialWeight,
+      initialWeight: newBatch.currentWeight,
       status: newBatch.currentStatus,
       startedAt: startDate,
+      completedAt: null,
     });
 
     return res
@@ -61,12 +74,23 @@ async function index(req, res) {
 // Edit Batch
 // Edit Batch and Update Batch History
 async function editBatch(req, res) {
+  function processDuration(startedAt, completedAt) {
+    const date1 = new Date("2025-03-11T05:30:00");
+    const date2 = new Date("2025-03-13T08:29:00"); // Adjusted to match 2d, 23h, 59m
 
-  console.log(req.body);
+    const diffMs = date2 - date1; // Difference in milliseconds
+    const diffMinutes = Math.floor(diffMs / (1000 * 60)); // Convert to minutes
 
+    const days = Math.floor(diffMinutes / (60 * 24)); // Extract days
+    const hours = Math.floor((diffMinutes % (60 * 24)) / 60); // Extract hours
+    const minutes = diffMinutes % 60; // Extract minutes
 
+    console.log(`${days} days, ${hours} hours, ${minutes} minutes`);
+    return `${days} days, ${hours} hours, ${minutes} minutes`;
+  }
   try {
     const { batchId } = req.params;
+    const { currentStatus, startedAt } = req.body;
 
     const batch = await Batch.findOne({ where: { batchId } });
 
@@ -74,22 +98,27 @@ async function editBatch(req, res) {
       return res.status(404).json({ message: "Batch not found" });
     }
 
-    // Store previous status and weight before updating
     const previousStatus = batch.currentStatus;
+    const completedAt = new Date();
+    const processDuration = processDuration(startedAt, completedAt);
 
-    // Update only the provided fields
-    await batch.update(req.body);
+    // Update batch with the new status
+    await batch.update({ currentStatus });
 
-    // If status or weight changed, add a new entry in BatchHistory
-    if (
-      (req.body.currentStatus && req.body.currentStatus !== previousStatus)
-    ) {
+    // If status is changing, update BatchHistory
+    if (currentStatus && currentStatus !== previousStatus) {
+      // Mark `completedAt` for the previous status
+      await BatchHistory.update(
+        { completedAt: completedAt },
+        { processDuration: processDuration },
+        { where: { batchId, status: previousStatus, completedAt: null } }
+      );
+
+      // Insert new status entry with `startedAt`
       await BatchHistory.create({
         batchId: batch.batchId,
-        initialWeight: batch.initialWeight,
-        currentWeight: batch.currentWeight,
-        status: batch.currentStatus,
-        updatedAt: new Date(),
+        status: currentStatus,
+        startedAt: completedAt, // This marks when the new status begins
       });
     }
 
@@ -101,7 +130,6 @@ async function editBatch(req, res) {
     return res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
 // Delete Batch
 async function deleteBatch(req, res) {
