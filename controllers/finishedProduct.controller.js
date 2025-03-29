@@ -1,4 +1,5 @@
 //const { where } = require("sequelize");
+const utils = require("../functions/utils");
 const { FinishedProduct } = require("../models");
 
 // Add or Update Finished Product Stock
@@ -89,7 +90,14 @@ async function deduct_FinishedProduct(req, res) {
 async function index(req, res) {
   try {
     const products = await FinishedProduct.findAll();
-    res.status(200).json(products);
+
+    const formattedProducts = products.map((p) => ({
+      ...p.toJSON(),
+      mfdDate: utils.formattedDate(p.mfdDate),
+      expDate: utils.formattedDate(p.expDate),
+    }));
+
+    res.status(200).json(formattedProducts);
   } catch (error) {
     console.error("Error fetching finished products:", error);
     res.status(500).json({ message: "Something went wrong" });

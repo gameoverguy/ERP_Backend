@@ -1,4 +1,5 @@
 //const { where } = require("sequelize");
+const utils = require("../functions/utils");
 const { RawMaterialStock, RawMaterial } = require("../models");
 
 async function upsert_RawMaterialStock(req, res) {
@@ -74,7 +75,13 @@ async function deductRawMaterialStock(req, res) {
 async function index(req, res) {
   try {
     const materials = await RawMaterialStock.findAll();
-    res.status(200).json(materials);
+
+    const formattedMaterials = materials.map((m) => ({
+      ...m.toJSON(), // Convert Sequelize instance to plain object
+      lastRestockDate: utils.formattedDate(m.lastRestockDate), // Format purchaseDate
+    }));
+
+    res.status(200).json(formattedMaterials);
   } catch (error) {
     console.error("Error fetching raw materials:", error);
     res.status(500).json({ message: "Something went wrong" });

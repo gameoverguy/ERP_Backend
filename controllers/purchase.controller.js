@@ -1,3 +1,4 @@
+const utils = require("../functions/utils");
 const { Purchase } = require("../models");
 
 async function addPurchase(req, res) {
@@ -43,7 +44,12 @@ async function index(req, res) {
   try {
     const purchases = await Purchase.findAll();
 
-    res.status(200).json(purchases);
+    const formattedPurchases = purchases.map((p) => ({
+      ...p.toJSON(), // Convert Sequelize instance to plain object
+      purchaseDate: utils.formattedDate(p.purchaseDate), // Format purchaseDate
+    }));
+
+    res.status(200).json(formattedPurchases);
   } catch (error) {
     console.error("Error fetching BOMs:", error);
     res.status(500).json({ error: "Internal server error" });

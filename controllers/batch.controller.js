@@ -1,3 +1,4 @@
+const utils = require("../functions/utils");
 const { Batch, BatchHistory } = require("../models");
 
 // Add Batch
@@ -66,7 +67,20 @@ async function index(req, res) {
       },
     });
 
-    res.status(200).json(batches);
+    const formattedBatches = batches.map((bat) => ({
+      ...bat.toJSON(), // Convert Sequelize instance to plain object
+      startDate: utils.formattedDate(bat.startDate),
+      endDate: utils.formattedDate(bat.endDate),
+      BatchHistories: bat.BatchHistories.map((history) => ({
+        ...history.toJSON(), // Convert each BatchHistory instance to plain object
+        startedAt: utils.formattedDate(history.startedAt),
+        completedAt: history.completedAt
+          ? utils.formattedDate(history.completedAt)
+          : null, // Handle null values
+      })),
+    }));
+
+    res.status(200).json(formattedBatches);
   } catch (error) {
     console.error("Error fetching Batches:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -86,17 +100,22 @@ async function editBatch(req, res) {
     const minutes = Math.floor((totalSeconds % 3600) / 60); // Get minutes
     const seconds = totalSeconds % 60; // Get seconds
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(seconds).padStart(2, "0")}`;
   }
-
-
-
-
-
 
   try {
     const { batchId } = req.params;
-    const { currentStatus, initialWeight, waste, totalWaste, currentWeight, endDate } = req.body;
+    const {
+      currentStatus,
+      initialWeight,
+      waste,
+      totalWaste,
+      currentWeight,
+      endDate,
+    } = req.body;
 
     const batch = await Batch.findOne({ where: { batchId } });
 
@@ -108,7 +127,6 @@ async function editBatch(req, res) {
     const completedAt = new Date();
     //const processDuration = processDuration(startedAt, completedAt);
 
-
     const updateData = { currentStatus, totalWaste, currentWeight };
 
     if (endDate != null) {
@@ -117,14 +135,12 @@ async function editBatch(req, res) {
 
     await batch.update(updateData);
 
-
-
     // If status is changing, update BatchHistory
     if (currentStatus && currentStatus !== previousStatus) {
       // Mark `completedAt` for the previous status
 
       const previousHistory = await BatchHistory.findOne({
-        where: { batchId, status: previousStatus, completedAt: null }
+        where: { batchId, status: previousStatus, completedAt: null },
       });
 
       if (previousHistory) {
@@ -143,9 +159,6 @@ async function editBatch(req, res) {
         );
       }
 
-
-
-      // Insert new status entry with `startedAt`
       await BatchHistory.create({
         initialWeight: batch.initialWeight,
         initialProcessWeight: currentWeight,
@@ -153,7 +166,6 @@ async function editBatch(req, res) {
         status: currentStatus,
         startedAt: completedAt, // This marks when the new status begins
       });
-
     }
 
     return res
