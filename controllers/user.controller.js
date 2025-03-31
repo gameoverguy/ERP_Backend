@@ -56,7 +56,7 @@ async function authenticate(req, res) {
   console.log(user, "This is the users");
   if (!user) {
     console.log(user);
-    return res.status(404).json({ message: "User not found" });
+    return res.json({ message: "User not found" });
   }
 
   // const isValidPassword = await bcrypt.compare(password, user.password);
@@ -66,7 +66,7 @@ async function authenticate(req, res) {
 
   if (password === user.password) {
     const token = generateToken(user);
-    res.json({ token });
+    res.json({ token, role: user.role });
   }
 }
 
