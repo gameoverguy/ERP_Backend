@@ -40,12 +40,18 @@ module.exports = {
       startDate: {
         type: Sequelize.DATE,
         allowNull: true,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       endDate: {
         type: Sequelize.DATE,
         allowNull: true,
       },
     });
+
+    // Set AUTO_INCREMENT starting point to 10001 for 'id' column
+    await queryInterface.sequelize.query(
+      "ALTER TABLE `batch` AUTO_INCREMENT = 10001;"
+    );
     /**
      * Add altering commands here.
      *

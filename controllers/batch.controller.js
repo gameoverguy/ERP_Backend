@@ -73,10 +73,10 @@ async function index(req, res) {
       endDate: utils.formattedDate(bat.endDate),
       BatchHistories: bat.BatchHistories.map((history) => ({
         ...history.toJSON(), // Convert each BatchHistory instance to plain object
-        startedAt: utils.formattedDate(history.startedAt),
+        startedAt: utils.ist_datetime(history.startedAt),
         completedAt: history.completedAt
-          ? utils.formattedDate(history.completedAt)
-          : null, // Handle null values
+          ? utils.ist_datetime(history.completedAt)
+          : "-",
       })),
     }));
 
