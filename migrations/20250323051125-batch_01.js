@@ -47,6 +47,11 @@ module.exports = {
         allowNull: true,
       },
     });
+
+    // Set AUTO_INCREMENT starting point to 10001 for 'id' column
+    await queryInterface.sequelize.query(
+      "ALTER TABLE `batch` AUTO_INCREMENT = 10001;"
+    );
     /**
      * Add altering commands here.
      *

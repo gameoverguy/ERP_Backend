@@ -12,8 +12,8 @@ const utils = {
     const date = new Date(isoDate);
 
     // Convert to IST (UTC +5:30)
-    const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
-    const istDate = new Date(date.getTime() + istOffset);
+    //const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
+    const istDate = new Date(date.getTime() + 0);
 
     const day = String(istDate.getDate()).padStart(2, "0");
     const month = String(istDate.getMonth() + 1).padStart(2, "0");

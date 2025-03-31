@@ -74,7 +74,9 @@ async function index(req, res) {
       BatchHistories: bat.BatchHistories.map((history) => ({
         ...history.toJSON(), // Convert each BatchHistory instance to plain object
         startedAt: utils.ist_datetime(history.startedAt),
-        completedAt: utils.ist_datetime(history.completedAt),
+        completedAt: history.completedAt
+          ? utils.ist_datetime(history.completedAt)
+          : "-",
       })),
     }));
 
