@@ -66,13 +66,13 @@ async function authenticate(req, res) {
 
   if (password === user.password) {
     const token = generateToken(user);
-    res.json({ token, role: user.role });
+    res.json({ token, role: user.role, displayName: user.displayName });
   }
 }
 
 async function validateToken(req, res) {
   res.json({
-    message: `welcome ${req.user.displayName}, this is protected data`,
+    message: `welcome`,
   });
 }
 
