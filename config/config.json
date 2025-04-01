@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "admin",
+    "password": "mysql",
     "database": "ERP_DB",
     "host": "localhost",
     "dialect": "mysql",
