@@ -22,7 +22,7 @@ async function addUser(req, res) {
       lastName,
       displayName: fullName,
       role,
-      address
+      address,
     });
 
     // Assign userId and displayName
@@ -36,7 +36,7 @@ async function addUser(req, res) {
   }
 }
 
-//get the user 
+//get the user
 async function index(req, res) {
   try {
     const users = await User.findAll();
@@ -53,24 +53,27 @@ async function authenticate(req, res) {
   console.log(req.body);
 
   const user = await User.findOne({ where: { userId } });
-  console.log(user, "This is the users")
-  if(!user){
+  console.log(user, "This is the users");
+  if (!user) {
     console.log(user);
-    return res.status(404).json({ message: "User not found" })
+    return res.json({ message: "User not found" });
   }
 
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if(!isValidPassword) {
-    return res.status(404).json({ message: "Invalid Password"})
-  }
+  // const isValidPassword = await bcrypt.compare(password, user.password);
+  // if (!isValidPassword) {
+  //   return res.status(404).json({ message: "Invalid Password" });
+  // }
 
-  const token = generateToken(user);
-  res.json({ token })
+  if (password === user.password) {
+    const token = generateToken(user);
+    res.json({ token, role: user.role, displayName: user.displayName });
+  }
 }
 
 async function validateToken(req, res) {
-  res.json({ message: `welcome ${req.user.displayName}, this is protected data` })
+  res.json({
+    message: `welcome`,
+  });
 }
-
 
 module.exports = { index, addUser, authenticate, validateToken };

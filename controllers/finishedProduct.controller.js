@@ -15,8 +15,15 @@ async function upsert_FinishedProduct(req, res) {
     if (product) {
       // Update the existing product
       Object.keys(sizes).forEach((size) => {
-        if (product[size] !== undefined) {
-          product[size] += parseFloat(sizes[size]);
+        let newSizeValue = parseFloat(sizes[size]);
+
+        // Ensure newSizeValue is a valid number before updating
+        if (
+          !isNaN(newSizeValue) &&
+          product[size] !== undefined &&
+          product[size] !== null
+        ) {
+          product[size] = parseFloat(product[size] || 0) + newSizeValue;
         }
       });
 
@@ -29,14 +36,19 @@ async function upsert_FinishedProduct(req, res) {
         .status(200)
         .json({ message: "Product updated successfully", data: product });
     } else {
-      // Create a new product entry
+      // Create a new product entry with validated sizes
       const newProductData = {
         batchId,
         productName,
-        ...sizes,
         mfdDate,
         expDate,
       };
+
+      // Ensure only valid numeric values are set for sizes
+      Object.keys(sizes).forEach((size) => {
+        let newSizeValue = parseFloat(sizes[size]);
+        newProductData[size] = isNaN(newSizeValue) ? 0 : newSizeValue;
+      });
 
       const newProduct = await FinishedProduct.create(newProductData);
 
