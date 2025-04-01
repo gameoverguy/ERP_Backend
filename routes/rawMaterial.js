@@ -3,7 +3,7 @@ const rawMaterialController = require("../controllers/rawMaterial.controller");
 const verifyToken = require("../middleware");
 const router = express.Router();
 
-router.get("/", verifyToken, rawMaterialController.index);
+router.get("/", rawMaterialController.index);
 router.post("/addRawMaterial", rawMaterialController.addRawMaterial);
 router.patch("/:materialId", rawMaterialController.editRawMaterial);
 router.delete("/:materialId", rawMaterialController.deleteRawMaterial);

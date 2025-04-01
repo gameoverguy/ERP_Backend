@@ -17,9 +17,7 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.SECRET_KEY, async (err, decode) => {
       if (err) {
-        return res
-          .status(403)
-          .json({ message: "Inavalid token", tokenExpired: true });
+        return res.json({ message: "Inavalid token", tokenExpired: true });
       }
 
       console.log(decode, "DECODE");
