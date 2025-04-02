@@ -21,7 +21,10 @@ async function sendOtp(req, res) {
       service: "gmail",
       auth: {
         user: fromEmail,
-        pass: "$Xx9789527337",
+        pass: "qaoe wdtr takw etge",
+      },
+      tls: {
+        rejectUnauthorized: false, // Ignore self-signed certificate errors
       },
     });
 
