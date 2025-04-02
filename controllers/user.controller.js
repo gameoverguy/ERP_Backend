@@ -1,6 +1,84 @@
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
 const generateToken = require("../utilis/index");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
+async function sendOtp(req, res) {
+  try {
+    // Generate a 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    // Store OTP in localStorage (client-side)
+    res.setHeader("Set-Cookie", `otp=${otp}; HttpOnly; Path=/; Max-Age=300`); // 5 minutes expiry
+
+    // Email details (hardcoded)
+    const fromEmail = "gameoverguy@gmail.com";
+    const toEmail = "karthick251087@gmail.com"; // Super Admin email
+
+    // Send OTP via email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: fromEmail,
+        pass: "$Xx9789527337",
+      },
+    });
+
+    const mailOptions = {
+      from: fromEmail,
+      to: toEmail,
+      subject: "Super Admin Password Reset OTP",
+      text: `Your OTP for password reset is: ${otp}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "OTP sent to Super Admin email" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function resetPassword(req, res) {
+  try {
+    const { otp, newPassword } = req.body;
+
+    // Get OTP from cookie
+    const storedOtp = req.headers.cookie
+      ?.split("; ")
+      .find((row) => row.startsWith("otp="))
+      ?.split("=")[1];
+
+    if (!storedOtp) {
+      return res.status(400).json({ message: "OTP expired or not found" });
+    }
+
+    // Check if OTP matches
+    if (storedOtp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // Find Super Admin user (assuming userId is "KM10001")
+    const user = await User.findOne({ where: { userId: "KM10001" } });
+    if (!user) {
+      return res.status(404).json({ message: "Super Admin not found" });
+    }
+
+    // Hash new password
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    // Clear OTP cookie after use
+    res.setHeader("Set-Cookie", "otp=; HttpOnly; Path=/; Max-Age=0");
+
+    res
+      .status(200)
+      .json({ message: "Super Admin password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 //create the user
 async function addUser(req, res) {
@@ -168,4 +246,6 @@ module.exports = {
   updateUserFields,
   updatePassword,
   deleteUser,
+  sendOtp,
+  resetPassword,
 };
