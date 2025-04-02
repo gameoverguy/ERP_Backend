@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -14,8 +16,22 @@ const finishedProductRoute = require("./routes/finishedProduct");
 const dashboardRoute = require("./routes/dashboard");
 const users = require("./routes/user");
 
+app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend URL
+    credentials: true, // Allow cookies
+  })
+);
+app.use(
+  session({
+    secret: "12345",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 300000 }, // 5 minutes expiry
+  })
+);
 
 app.use("/rawMaterials", rawMaterialRoute);
 app.use("/boms", bomRoute);
