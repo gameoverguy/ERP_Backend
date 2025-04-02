@@ -36,6 +36,25 @@ async function addUser(req, res) {
   }
 }
 
+async function deleteUser(req, res) {
+  try {
+    const { userId } = req.params; // Get userId from URL
+
+    // Find the user
+    const user = await User.findOne({ where: { userId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Delete user
+    await user.destroy();
+
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 //get the user
 async function index(req, res) {
   try {
@@ -48,27 +67,89 @@ async function index(req, res) {
   }
 }
 
-async function authenticate(req, res) {
-  const { userId, password } = req.body;
-  console.log(req.body);
+async function updatePassword(req, res) {
+  try {
+    const { userId } = req.params;
+    const { oldPassword, newPassword } = req.body;
 
-  const user = await User.findOne({ where: { userId } });
-  console.log(user, "This is the users");
-  if (!user) {
-    console.log(user);
-    return res.json({ message: "User not found" });
+    // Find user
+    const user = await User.findOne({ where: { userId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect old password" });
+    }
+
+    // Hash new password and update
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
+}
 
-  // const isValidPassword = await bcrypt.compare(password, user.password);
-  // if (!isValidPassword) {
-  //   return res.status(404).json({ message: "Invalid Password" });
-  // }
+async function updateUserFields(req, res) {
+  try {
+    const { userId } = req.params;
+    const updates = req.body; // Only send fields you want to update
 
-  if (password === user.password) {
+    // Find user
+    const user = await User.findOne({ where: { userId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update only provided fields
+    Object.keys(updates).forEach((key) => {
+      if (key !== "password") {
+        user[key] = updates[key];
+      }
+    });
+
+    // Update displayName if firstName or lastName is updated
+    if (updates.firstName || updates.lastName) {
+      user.displayName = `${user.firstName} ${user.lastName}`.trim();
+    }
+
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "User details updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function authenticate(req, res) {
+  try {
+    const { userId, password } = req.body;
+    console.log(req.body);
+
+    const user = await User.findOne({ where: { userId } });
+    console.log(user, "This is the user");
+
+    if (!user) {
+      return res.json({ message: "User not found" });
+    }
+
+    // Compare hashed password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.json({ message: "Invalid Credentials" });
+    }
+
+    // Generate token
     const token = generateToken(user);
-    res.json({ token, role: user.role, displayName: user.displayName });
-  } else {
-    res.json({ message: "Invalid Credentials" });
+    return res.json({ token, role: user.role, displayName: user.displayName });
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -79,4 +160,12 @@ async function validateToken(req, res) {
   });
 }
 
-module.exports = { index, addUser, authenticate, validateToken };
+module.exports = {
+  index,
+  addUser,
+  authenticate,
+  validateToken,
+  updateUserFields,
+  updatePassword,
+  deleteUser,
+};
