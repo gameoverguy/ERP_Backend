@@ -67,15 +67,15 @@ async function authenticate(req, res) {
   if (password === user.password) {
     const token = generateToken(user);
     res.json({ token, role: user.role, displayName: user.displayName });
-  }
-  else{
-    res.json({message:"Invalid Credentials"})
+  } else {
+    res.json({ message: "Invalid Credentials" });
   }
 }
 
 async function validateToken(req, res) {
   res.json({
     message: `welcome`,
+    tokenExpired: false,
   });
 }
 
