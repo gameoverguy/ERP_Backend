@@ -4,6 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert("vendor", [
       {
+        id: 10001,
         vendorId: "V10001",
         vendorName: "SpicesIndia Pvt Ltd",
         registrationNumber: "REG123456",
@@ -19,6 +20,7 @@ module.exports = {
         micr: "600002123",
       },
       {
+        id: 10002,
         vendorId: "V10002",
         vendorName: "FreshMasala Co.",
         registrationNumber: "REG654321",
@@ -34,6 +36,7 @@ module.exports = {
         micr: "560002567",
       },
       {
+        id: 10003,
         vendorId: "V10003",
         vendorName: "GoldenSpices Traders",
         registrationNumber: "REG789012",
