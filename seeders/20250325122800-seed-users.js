@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.bulkInsert("users", [
       {
         userId: "KM10001",
-        password: "password123",
+        password: "password",
         firstName: "Super",
         lastName: "Admin",
         displayName: "Super Admin",
@@ -14,7 +14,7 @@ module.exports = {
       },
       {
         userId: "KM10002",
-        password: "password123",
+        password: "password",
         firstName: "John",
         lastName: "Doe",
         displayName: "John Doe",
@@ -23,7 +23,7 @@ module.exports = {
       },
       {
         userId: "KM10003",
-        password: "password123",
+        password: "password",
         firstName: "Jane",
         lastName: "Smith",
         displayName: "Jane Smith",
@@ -32,7 +32,7 @@ module.exports = {
       },
       {
         userId: "KM10004",
-        password: "password123",
+        password: "password",
         firstName: "Mike",
         lastName: "Johnson",
         displayName: "Mike Johnson",
@@ -41,7 +41,7 @@ module.exports = {
       },
       {
         userId: "KM10005",
-        password: "password123",
+        password: "password",
         firstName: "Emily",
         lastName: "Williams",
         displayName: "Emily Williams",
