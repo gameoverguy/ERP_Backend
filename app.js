@@ -18,12 +18,37 @@ const users = require("./routes/user");
 
 app.use(cookieParser());
 app.use(bodyParser.json());
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Your frontend URL
+//     credentials: true, // Allow cookies
+//   })
+// );
+
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "http://192.168.156.59:5173", // Allow access from network devices
+// ];
+
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true, // If using cookies or authentication
+//   })
+// );
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend URL
-    credentials: true, // Allow cookies
+    origin: "*",
   })
 );
+
 app.use(
   session({
     secret: "12345",
