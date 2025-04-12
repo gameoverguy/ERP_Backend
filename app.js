@@ -25,29 +25,30 @@ app.use(bodyParser.json());
 //   })
 // );
 
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "http://192.168.156.59:5173", // Allow access from network devices
-// ];
-
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true, // If using cookies or authentication
-//   })
-// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://192.168.156.59:5173",
+  "http://192.168.1.13:5173",
+];
 
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // If using cookies or authentication
   })
 );
+
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
 
 app.use(
   session({

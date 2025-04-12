@@ -12,5 +12,6 @@ router.patch("/:userId", userController.updateUserFields); //Request body (Examp
 router.delete("/:userId", userController.deleteUser);
 router.post("/getotp", userController.sendOtp);
 router.post("/resetpassword", userController.resetPassword);
+router.put("/:userId/changepassword", userController.adminResetPassword); //Request body: { "oldPassword": "123456", "newPassword": "newpass123" }
 
 module.exports = router;

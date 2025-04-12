@@ -73,6 +73,30 @@ async function resetPassword(req, res) {
   }
 }
 
+async function adminResetPassword(req, res) {
+  try {
+    const { newPassword } = req.body;
+    const { userId } = req.params;
+
+    // Check if user exists
+    const user = await User.findOne({ where: { userId } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password
+    await User.update({ password: hashedPassword }, { where: { userId } });
+
+    res.status(200).json({ message: "Password reset by admin successful" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 //create the user
 async function addUser(req, res) {
   try {
@@ -241,4 +265,5 @@ module.exports = {
   deleteUser,
   sendOtp,
   resetPassword,
+  adminResetPassword,
 };
