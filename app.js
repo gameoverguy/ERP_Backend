@@ -15,6 +15,7 @@ const batchRoute = require("./routes/batch");
 const finishedProductRoute = require("./routes/finishedProduct");
 const dashboardRoute = require("./routes/dashboard");
 const users = require("./routes/user");
+const warehouses = require("./routes/warehouse");
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -68,5 +69,6 @@ app.use("/batches", batchRoute);
 app.use("/finishedProducts", finishedProductRoute);
 app.use("/dashboard", dashboardRoute);
 app.use("/users", users);
+app.use("/warehouses", warehouses);
 
 module.exports = app;
