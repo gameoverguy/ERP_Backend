@@ -17,6 +17,7 @@ async function upsert_RawMaterialStock(req, res) {
       // Update the existing material's weight and purchase date
       material.currentStock = material.currentStock + parseFloat(weight);
       material.minStock = rm.minStock;
+      material.lastRestockDate = purchaseDate;
 
       await material.save();
 

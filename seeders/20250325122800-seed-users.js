@@ -13,8 +13,6 @@ module.exports = {
         displayName: "Super Admin",
         role: "superadmin",
         address: "123 Admin St, City",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         id: 10002,
@@ -26,8 +24,6 @@ module.exports = {
         displayName: "Process Admin",
         role: "processadmin",
         address: "456 Process St, City",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         id: 10003,
@@ -39,8 +35,6 @@ module.exports = {
         displayName: "Purchase Admin",
         role: "purchaseadmin",
         address: "789 Purchase Ave, City",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         id: 10004,
@@ -52,8 +46,6 @@ module.exports = {
         displayName: "Inventory Admin",
         role: "inventoryadmin",
         address: "321 Inventory Rd, City",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         id: 10005,
@@ -65,8 +57,6 @@ module.exports = {
         displayName: "Package Admin",
         role: "packageadmin",
         address: "654 Package Blvd, City",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ]);
   },

@@ -13,6 +13,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      warehouseId: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      warehouseName: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       productName: {
         type: Sequelize.STRING,
         allowNull: true,

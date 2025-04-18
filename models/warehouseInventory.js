@@ -2,11 +2,11 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class FinishedProduct extends Model {
+  class WarehouseInventory extends Model {
     static associate(models) {}
   }
 
-  FinishedProduct.init(
+  WarehouseInventory.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -14,14 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       batchId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      warehouseId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      warehouseName: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -56,11 +48,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "FinishedProduct",
-      tableName: "finished_Products",
+      modelName: "WarehouseInventory",
+      tableName: "WarehouseInventory",
       timestamps: false,
     }
   );
 
-  return FinishedProduct;
+  return WarehouseInventory;
 };

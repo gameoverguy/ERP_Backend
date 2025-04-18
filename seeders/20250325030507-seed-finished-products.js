@@ -14,8 +14,6 @@ module.exports = {
           "500g": 70,
           mfdDate: "2025-03-01 05:30:00",
           expDate: "2025-03-01 05:30:00",
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           batchId: "BAT10002",
@@ -26,8 +24,6 @@ module.exports = {
           "500g": 120,
           mfdDate: "2025-03-01 05:30:00",
           expDate: "2025-03-01 05:30:00",
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           batchId: "BAT10003",
@@ -38,8 +34,6 @@ module.exports = {
           "500g": 56,
           mfdDate: "2025-03-01 05:30:00",
           expDate: "2025-03-01 05:30:00",
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           batchId: "BAT10004",
@@ -50,8 +44,6 @@ module.exports = {
           "500g": 50,
           mfdDate: "2025-03-01 05:30:00",
           expDate: "2025-03-01 05:30:00",
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           batchId: "BAT10005",
@@ -62,8 +54,6 @@ module.exports = {
           "500g": 75,
           mfdDate: "2025-03-01 05:30:00",
           expDate: "2025-03-01 05:30:00",
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ],
       {}
