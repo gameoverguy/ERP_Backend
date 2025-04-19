@@ -43,6 +43,10 @@ module.exports = {
         allowNull: true,
       },
     });
+
+    await queryInterface.sequelize.query(
+      "ALTER TABLE `stock_transfer_Orders` AUTO_INCREMENT = 10001;"
+    );
   },
 
   async down(queryInterface, Sequelize) {

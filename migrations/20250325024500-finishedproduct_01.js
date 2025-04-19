@@ -16,10 +16,12 @@ module.exports = {
       warehouseId: {
         type: Sequelize.STRING,
         allowNull: true,
+        defaultValue: "WH10001",
       },
       warehouseName: {
         type: Sequelize.STRING,
         allowNull: true,
+        defaultValue: "Main Factory",
       },
       productName: {
         type: Sequelize.STRING,
@@ -28,18 +30,22 @@ module.exports = {
       "50g": {
         type: Sequelize.FLOAT,
         allowNull: true,
+        defaultValue: 0,
       },
       "100g": {
         type: Sequelize.FLOAT,
         allowNull: true,
+        defaultValue: 0,
       },
       "200g": {
         type: Sequelize.FLOAT,
         allowNull: true,
+        defaultValue: 0,
       },
       "500g": {
         type: Sequelize.FLOAT,
         allowNull: true,
+        defaultValue: 0,
       },
       mfdDate: {
         type: Sequelize.DATE,
