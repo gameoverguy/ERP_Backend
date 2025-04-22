@@ -1,3 +1,4 @@
+const utils = require("../functions/utils");
 const {
   StockTransferOrder,
   StockTransferItem,
@@ -157,12 +158,8 @@ const getAllStockTransfers = async (req, res) => {
 
     const formattedOrders = orders.map((order) => ({
       ...order.toJSON(),
-      dispatch_date: order.dispatch_date?.toISOString().split("T")[0] || "-",
-      received_date: order.received_date
-        ? new Date(order.received_date).toLocaleString("en-IN", {
-            timeZone: "Asia/Kolkata",
-          })
-        : "-",
+      dispatch_date: utils.ist_datetime(order.dispatch_date),
+      received_date: utils.ist_datetime(order.received_date),
       StockTransferItems: order.StockTransferItems.map((item) => ({
         ...item.toJSON(),
       })),
