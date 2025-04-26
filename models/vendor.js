@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   Vendor.init(
     {
       vendorId: {
-        type: DataTypes.STRING, 
+        type: DataTypes.STRING,
         allowNull: true,
         unique: true,
       },
@@ -55,7 +55,6 @@ module.exports = (sequelize, DataTypes) => {
       bankAccountNumber: {
         type: DataTypes.STRING,
         allowNull: true,
-        unique: true,
       },
       ifsc: {
         type: DataTypes.STRING,

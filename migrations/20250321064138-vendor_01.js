@@ -56,7 +56,6 @@ module.exports = {
       bankAccountNumber: {
         type: Sequelize.STRING,
         allowNull: true,
-        unique: true,
       },
       ifsc: {
         type: Sequelize.STRING,
